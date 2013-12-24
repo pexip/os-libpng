@@ -1,3 +1,9 @@
+libpng (1.2.46-3ubuntu4pexip1) pexip; urgency=low
+
+  * Prepare Pexip packaging
+
+ -- John-Mark Bell <jmb@pexip.com>  Tue, 24 Dec 2013 21:56:10 +0000
+
 libpng (1.2.46-3ubuntu4) precise; urgency=low
 
   * SECURITY UPDATE: denial of service and possible code execution via
