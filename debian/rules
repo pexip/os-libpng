@@ -10,13 +10,11 @@ DEB_HOST_GNU_TYPE   ?= $(shell dpkg-architecture -qDEB_HOST_GNU_TYPE)
 DEB_BUILD_GNU_TYPE  ?= $(shell dpkg-architecture -qDEB_BUILD_GNU_TYPE)
 DEB_HOST_MULTIARCH  ?= $(shell dpkg-architecture -qDEB_HOST_MULTIARCH)
 
-CFLAGS = -Wall -g
-
-ifneq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
-	CFLAGS += -O0
-else
-	CFLAGS += -O2
-endif
+CFLAGS = `dpkg-buildflags --get CFLAGS`
+CFLAGS += -Wall
+LDFLAGS = `dpkg-buildflags --get LDFLAGS`
+LDFLAGS += "-Wl,-z,defs"
+CPPFLAGS = `dpkg-buildflags --get CPPFLAGS`
 
 config.status: configure
 	dh_testdir
@@ -26,7 +24,7 @@ config.status: configure
 		--prefix=/usr --mandir=\$${prefix}/share/man \
 		--infodir=\$${prefix}/share/info \
 		--libdir=\$${prefix}/lib/$(DEB_HOST_MULTIARCH) \
-		CFLAGS="$(CFLAGS)" LDFLAGS="-Wl,-z,defs"
+		CFLAGS="$(CFLAGS)" CPPFLAGS="$(CPPFLAGS)" LDFLAGS="$(LDFLAGS)"
 
 build: build-arch build-indep
 build-arch: build-stamp
@@ -48,7 +46,7 @@ install: build
 	dh_testdir
 	dh_testroot
 	dh_prep
-	set -e; for file in libpng12-0.install libpng12-dev.links libpng3.links; \
+	set -e; for file in libpng12-0.install libpng12-0.links libpng12-dev.links libpng3.links; \
 	do \
 		sed -e"s,\$${DEB_HOST_MULTIARCH},${DEB_HOST_MULTIARCH},g" \
 			debian/$${file}.in > debian/$$file; \
@@ -83,10 +81,7 @@ binary-arch: build install
 	dh_shlibdeps -a
 	dh_gencontrol -a
 	dh_md5sums -a
-	dh_builddeb -plibpng12-0
-	dh_builddeb -plibpng12-dev -- -Zbzip2 -z9
-	dh_builddeb -plibpng3 -- -Zbzip2 -z9
-	dh_builddeb -plibpng12-0-udeb
+	dh_builddeb -a
 
 binary: binary-indep binary-arch
 .PHONY: build clean binary-indep binary-arch binary install
