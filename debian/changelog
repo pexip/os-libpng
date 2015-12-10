@@ -1,6 +1,7 @@
 libpng (1.2.50-2+deb8u1pexip1) pexip; urgency=low
 
   * New upstream release
+  * Add CVE-2015-8472.patch: incomplete fix for CVE-2015-8126.
 
  -- John-Mark Bell <jmb@pexip.com>  Wed, 18 Nov 2015 20:18:43 +0000
 
